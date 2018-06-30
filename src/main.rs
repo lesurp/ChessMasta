@@ -21,6 +21,15 @@ use routes::*;
 fn main() {
     rocket::ignite()
         .mount("/", routes![index])
-        .mount("/api", routes![root_moves, request_move])
+        .mount(
+            "/api/moves",
+            routes![
+                create_move,
+                request_move,
+                update_move,
+                delete_move,
+                root_moves
+            ],
+        )
         .launch();
 }

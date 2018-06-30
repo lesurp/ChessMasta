@@ -1,57 +1,42 @@
 use diesel::prelude::*;
 use models::Move;
 use rocket::http::Status;
+use rocket::response::{Failure, NamedFile};
 use rocket_contrib::Json;
-use utils::establish_connection;
+use utils::{establish_connection, MoveForm};
 
 #[get("/")]
-pub fn index() -> &'static str {
-    "Hello, world!"
+fn index() -> ::std::io::Result<NamedFile> {
+    NamedFile::open("static/index.html")
 }
 
-#[get("/root_moves")]
-pub fn root_moves() -> Json<Vec<Move>> {
+#[get("/")]
+pub fn root_moves() -> Result<Json<Vec<Move>>, Failure> {
     use schema::moves::dsl::*;
 
     let connection = establish_connection();
     let results = moves
         .filter(parent.is_null())
         .load::<Move>(&connection)
-        .expect("Error loading posts");
-    Json(results)
-}
-
-#[put("/<move_id>", format = "application/json", data = "<move_information>")]
-pub fn update_move(move_id: i32, move_information: Json<Move>) -> Result<(), Status> {
-    use schema::moves::dsl::*;
-
-    let connection = establish_connection();
-    let mut move_vec = moves
-        .find(move_id)
-        .load::<Move>(&connection)
         .map_err(|_| Status::InternalServerError)?;
-
-    let actual_move = move_vec.pop().ok_or_else(|| Status::NotFound)?;
-    ::diesel::update(&actual_move).set(move_information.0);
-    Ok(())
+    Ok(Json(results))
 }
+
 #[post("/", format = "application/json", data = "<move_information>")]
-pub fn create_move(move_information: Json<Move>) -> Result<(), Status> {
+pub fn create_move(move_information: Json<MoveForm>) -> Result<(), Failure> {
     use schema::moves::dsl::*;
 
     let connection = establish_connection();
-    let mut move_vec = moves
-        .find(move_id)
-        .load::<Move>(&connection)
+    ::diesel::insert_into(moves)
+        .values(move_information.0)
+        .execute(&connection)
         .map_err(|_| Status::InternalServerError)?;
 
-    let actual_move = move_vec.pop().ok_or_else(|| Status::NotFound)?;
-    ::diesel::update(&actual_move).set(move_information.0);
     Ok(())
 }
 
 #[get("/<move_id>")]
-pub fn request_move(move_id: i32) -> Result<Json<(Move, Vec<Move>)>, Status> {
+pub fn request_move(move_id: i32) -> Result<Json<(Move, Vec<Move>)>, Failure> {
     use schema::moves::dsl::*;
 
     let connection = establish_connection();
@@ -68,6 +53,40 @@ pub fn request_move(move_id: i32) -> Result<Json<(Move, Vec<Move>)>, Status> {
 
         Ok(Json((parent_move, children)))
     } else {
-        Err(Status::NoContent)
+        Err(Failure(Status::NoContent))
+    }
+}
+
+#[put("/<move_id>", format = "application/json", data = "<move_information>")]
+pub fn update_move(move_id: i32, move_information: Json<Move>) -> Result<(), Failure> {
+    use schema::moves::dsl::*;
+
+    let connection = establish_connection();
+    let n = ::diesel::update(moves)
+        .filter(id.eq(move_id))
+        .set(move_information.0)
+        .execute(&connection)
+        .map_err(|_| Status::InternalServerError)?;
+
+    if n != 1 {
+        Err(Failure(Status::NoContent))
+    } else {
+        Ok(())
+    }
+}
+
+#[delete("/<move_id>")]
+pub fn delete_move(move_id: i32) -> Result<(), Failure> {
+    use schema::moves::dsl::*;
+
+    let connection = establish_connection();
+    let n = ::diesel::delete(moves.find(move_id))
+        .execute(&connection)
+        .map_err(|_| Status::InternalServerError)?;
+
+    if n != 1 {
+        Err(Failure(Status::NoContent))
+    } else {
+        Ok(())
     }
 }

@@ -14,7 +14,7 @@ pub fn establish_connection() -> SqliteConnection {
 
 #[derive(Deserialize, Insertable)]
 #[table_name = "moves"]
-struct MoveForm {
+pub struct MoveForm {
     pub parent: Option<i32>,
     pub turn: i32,
     pub name_: String,
