@@ -1,16 +1,22 @@
 <div class="menu_bar">
-    {% if parent_move is defined %}
-    <span class="add_button" href='/create/{{ parent_move.id}}'>
+    {% if current_move %}
+    <a href='/create/{{ current_move.id}}'>
+    <span class="add_button" >
     Add follow-up move
     </span>
+    </a>
 
+    <a href='/update/{{ current_move.id }}'>
     <span class="modify_button">
     Modify move
     </span>
+    </a>
 
-    <span class="delete_button" href='{{ parent_move.id }}'>
+    <a href='/delete/{{ current_move.id }}'>
+    <span class="delete_button">
     Delete move
     </span>
+    </a>
     {% else %}
     <a href='/create'>
     <span class="add_button">

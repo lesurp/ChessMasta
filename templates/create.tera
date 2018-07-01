@@ -2,10 +2,15 @@
 
 {% block content %}
 <div>
-<form method="post">
-<input type="text" name="name_" placeholder="Move tag (ie: e4)"></input>
-<input type="text" name="special_name" placeholder="(optional) the line name (ie: Queen's gambit)"></input>
+<form method="post" action="/create">
+<input type="text" name="name_" placeholder="Move tag (ie: e4)">
+<input type="text" name="special_name" placeholder="(optional) the line name (ie: Queen's gambit)">
 <textarea name="line_description" maxlength="512" placeholder="(optional) detailed explanation of that line"></textarea>
-<input type="submit" value="Create new move"></input>
+<input type="submit" value="Create new move">
+
+{% if parent_move is defined %}
+<input type="hidden" name="parent_id" value='{{ parent_move.id }}'>
+{% endif %}
 </form>
+</div>
 {% endblock content %}

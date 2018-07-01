@@ -1,4 +1,4 @@
-#![feature(plugin)]
+#![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
 extern crate serde;
@@ -20,6 +20,8 @@ mod web_interface;
 use rocket_contrib::Template;
 
 fn main() {
+    //env_logger::init();
+
     rocket::ignite()
         .mount(
             "/",
@@ -28,7 +30,8 @@ fn main() {
                 web_interface::get_move,
                 web_interface::delete_move,
                 web_interface::create_move,
-                web_interface::create_root_move
+                web_interface::create_root_move,
+                web_interface::create_move_from_form
             ],
         )
         .mount("/static", routes![web_interface::files])

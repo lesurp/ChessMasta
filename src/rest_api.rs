@@ -1,7 +1,6 @@
 use models::*;
 use rocket::response::Failure;
 use rocket_contrib::Json;
-use utils::MoveForm;
 
 #[get("/")]
 pub fn root_moves() -> Result<Json<Vec<Move>>, Failure> {
@@ -9,8 +8,8 @@ pub fn root_moves() -> Result<Json<Vec<Move>>, Failure> {
 }
 
 #[post("/", format = "application/json", data = "<move_information>")]
-pub fn create_move(move_information: Json<MoveForm>) -> Result<(), Failure> {
-    Move::create_move(move_information.0)
+pub fn create_move(move_information: Json<NewMove>) -> Result<(), Failure> {
+    Move::create_move(move_information.0).map(|_| ())
 }
 
 #[get("/<move_id>")]

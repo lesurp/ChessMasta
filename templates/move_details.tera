@@ -1,0 +1,29 @@
+{% extends "base" %}
+
+{% block content %}
+<h1 class="move_item_vertical_split_title">
+{% if parent_move %}
+    <a href='/{{ parent_move.id }}'>
+{% else %}
+    <a href='/'>
+{% endif %}
+
+{% if current_move.turn is even %}
+    <span class="white_move">
+{% else %}
+    <span class="black_move">
+{% endif %}
+    {% if current_move.turn is even %}
+        {{ current_move.turn / 2 + 1 }}
+    {% else %}
+        {{ current_move.turn / 2 + 0.5 }}
+    {% endif %}. {{ current_move.name_ }} </span>                       
+    </a>
+    <span class="move_item_special_name">{{ current_move.special_name }} </span> 
+</h1>
+
+<div class="line_description">
+{{ current_move.line_description }}
+</div>
+{% include "move_list" %}
+{% endblock content %}
