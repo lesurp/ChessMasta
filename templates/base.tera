@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chess Masta!</title>
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+</head>
+
+<body id="container">
+ {% block content %}{% endblock content %}
+</body>
+
+</html>

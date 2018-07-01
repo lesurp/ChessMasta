@@ -1,0 +1,21 @@
+<div class="menu_bar">
+    {% if parent_move is defined %}
+    <span class="add_button" href='/create/{{ parent_move.id}}'>
+    Add follow-up move
+    </span>
+
+    <span class="modify_button">
+    Modify move
+    </span>
+
+    <span class="delete_button" href='{{ parent_move.id }}'>
+    Delete move
+    </span>
+    {% else %}
+    <a href='/create'>
+    <span class="add_button">
+    Add first move
+    </span>
+    </a>
+    {% endif %}
+</div>

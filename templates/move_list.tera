@@ -1,0 +1,17 @@
+{% include "menu" %}
+
+<ul id="move_list">
+{% for move in move_list %}
+        <a href="/{{ move.id }}">                        
+        {% if loop.index is even %}
+                <li class="move_item_vertical_split move_list_item_1">
+        {% else %}
+                <li class="move_item_vertical_split move_list_item_2">
+        {% endif %}
+
+        <span>{{ move.turn / 2 + 1 }}. {{ move.name_ }} </span>                       
+        <span class="move_item_special_name">{{ move.special_name }} </span> 
+        </li>
+        </a>
+{% endfor %}
+</ul>

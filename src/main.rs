@@ -12,24 +12,36 @@ extern crate rocket;
 extern crate rocket_contrib;
 
 mod models;
-mod routes;
+mod rest_api;
 mod schema;
 mod utils;
+mod web_interface;
 
-use routes::*;
+use rocket_contrib::Template;
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index])
+        .mount(
+            "/",
+            routes![
+                web_interface::index,
+                web_interface::get_move,
+                web_interface::delete_move,
+                web_interface::create_move,
+                web_interface::create_root_move
+            ],
+        )
+        .mount("/static", routes![web_interface::files])
         .mount(
             "/api/moves",
             routes![
-                create_move,
-                request_move,
-                update_move,
-                delete_move,
-                root_moves
+                rest_api::create_move,
+                rest_api::request_move,
+                rest_api::update_move,
+                rest_api::delete_move,
+                rest_api::root_moves
             ],
         )
+        .attach(Template::fairing())
         .launch();
 }

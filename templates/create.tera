@@ -1,0 +1,11 @@
+{% extends "base" %}
+
+{% block content %}
+<div>
+<form method="post">
+<input type="text" name="name_" placeholder="Move tag (ie: e4)"></input>
+<input type="text" name="special_name" placeholder="(optional) the line name (ie: Queen's gambit)"></input>
+<textarea name="line_description" maxlength="512" placeholder="(optional) detailed explanation of that line"></textarea>
+<input type="submit" value="Create new move"></input>
+</form>
+{% endblock content %}
