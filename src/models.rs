@@ -124,7 +124,7 @@ impl Move {
         }
     }
 
-    fn delete_move_recursive(move_: Move, connection: &SqliteConnection) -> Result<(), Failure> {
+    fn delete_move_recursive(move_: Move, connection: &PgConnection) -> Result<(), Failure> {
         let children = moves
             .filter(parent.eq(move_.id))
             .load::<Move>(connection)
