@@ -1,15 +1,20 @@
-FROM alpine:latest
+FROM debian:latest
 EXPOSE 80
-CMD ROCKET_ENV=production cargo run --release
 
-WORKDIR /src
-ONBUILD COPY ./ /src/
-
+ENV RUSTUP_HOME=/usr/local/rustup \
+		CARGO_HOME=/usr/local/cargo \
+		PATH=/usr/local/cargo/bin:$PATH
 
 RUN apt-get update && \
 apt-get upgrade && \
-apt-get install sqlite3 sass -y && \
-curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly && \
-cargo install diesel_cli && \
-diesel migration run && \
-sass --no-source-map /src/templates/style.scss /src/static/css/style.css
+apt-get install postgresql libpq-dev sass curl build-essential -y && \
+curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y --no-modify-path && \
+cargo install diesel_cli --no-default-features --features "postgres"
+
+WORKDIR /app
+COPY ./ /app
+
+CMD diesel setup && \
+	diesel migration run && \
+	sass --sourcemap=none ./templates/style.scss ./static/css/style.css && \
+	ROCKET_ENV=production cargo run --release
